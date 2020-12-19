@@ -6,15 +6,15 @@
             <h3>Login</h3>
             <div class="form-group">
                 <label>Email address</label>
-                <input type="email" class="form-control form-control-lg" />
+                <input type="email"  v-model="user.email" class="form-control form-control-lg" />
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control form-control-lg" />
+                <input type="password"  v-model="user.password" class="form-control form-control-lg" />
             </div>
 
-            <button type="submit" class="btn btn-dark btn-lg btn-block">Sign In</button>
+            <button type="button" v-on:click="login" class="btn btn-primary btn-lg btn-block">Login</button>
 
         </form>
         </div>
@@ -23,10 +23,46 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-undef
+import axios from 'axios';
     export default {
-        data() {
-            return {}
+      data() {
+        return {
+          user :{
+            email: this.email,
+            password: this.password,
+          }
         }
+      },
+      methods:{
+        login(){
+          axios.post('http://localhost:8000/api/login',this.user)
+              .then(response => {
+                console.log(response.data.token);
+                localStorage.setItem('token',response.data.token);
+                // eslint-disable-next-line no-undef
+                Swal.fire({
+
+                  icon: 'success',
+                  title: 'Successfully Login',
+                  showConfirmButton: false
+                })
+                window.location.href = '/admin';
+
+                console.log(response);
+              })
+              .catch(e => {
+                // eslint-disable-next-line no-undef
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Something went wrong!',
+                })
+                console.log(e);
+              })
+        }
+        }
+
     }
 </script>
 <style scoped>
