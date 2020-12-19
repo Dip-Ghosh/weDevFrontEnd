@@ -64,6 +64,7 @@ export default {
   },
   methods: {
     deleteProduct(id) {
+      const token = localStorage.getItem('token');
       // eslint-disable-next-line no-undef
       Swal.fire({
         title: 'Are you sure?',
@@ -75,7 +76,8 @@ export default {
         confirmButtonText: 'Confirm'
       }).then((result) => {
         if (result.isConfirmed) {
-          axios.delete('http://localhost:8000/api/product-delete/' + id)
+          axios.delete('http://localhost:8000/api/product-delete/' + id,
+              { headers: {"Authorization" : `Bearer ${token}`}})
               .then(response => {
                 // eslint-disable-next-line no-undef
                 Swal.fire(
@@ -107,8 +109,9 @@ export default {
   },
 
   mounted() {
-    axios.get('http://localhost:8000/api/product-list')
-        .then(response => {
+    const token = localStorage.getItem('token');
+    axios.get('http://localhost:8000/api/product-list',
+        { headers: {"Authorization" : `Bearer ${token}`}}).then(response => {
           // JSON responses are automatically parsed.
           this.products = response.data.product
           console.log(response);
