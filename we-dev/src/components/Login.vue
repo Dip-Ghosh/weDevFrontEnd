@@ -42,12 +42,18 @@ import axios from 'axios';
                 localStorage.setItem('token',response.data.token);
                 // eslint-disable-next-line no-undef
                 Swal.fire({
-
-                  icon: 'success',
                   title: 'Successfully Login',
-                  showConfirmButton: false
-                })
-                window.location.href = '/admin';
+                  icon: 'success',
+                  showCancelButton: false,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Ok'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.href = '/admin';
+                  }
+                });
+
 
                 console.log(response);
               })

@@ -8,22 +8,22 @@
 
         <ul class="nav navbar-nav flex-row float-right">
           <li class="nav-item" v-if="token === null || token === ''">
-            <router-link class=" btn btn-outline-primary " to="/login">Login</router-link>
+            <router-link class=" btn btn-outline-primary  btn-sm " to="/login">Login</router-link>
           </li>
           <li class="nav-item" v-if="token === null || token === ''">
-            <router-link class="btn btn-outline-info" to="/signup" style="margin-left:5px">Registration</router-link>
+            <router-link class="btn btn-outline-info  btn-sm" to="/signup" style="margin-left:5px">Registration</router-link>
           </li>
           <li class="nav-item" v-else>
-            <button class="btn btn-outline-primary" v-on:click="logout" style="margin-left: 5px">Log Out</button>
+            <button class="btn btn-outline-primary  btn-sm" v-on:click="logout" style="margin-left: 5px">Log Out</button>
           </li>
         </ul>
       </div>
     </nav>
-
     <!-- Main -->
     <div class="App">
       <router-view/>
     </div>
+
   </div>
 </template>
 

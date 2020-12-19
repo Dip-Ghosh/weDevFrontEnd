@@ -6,10 +6,10 @@
           <div class="card-header">
             <div>
               <h3 align="center">Product List
-                <button type="button" class="btn btn-primary float-right" v-on:click=createProduct
-                        style="margin-bottom:
+                <router-link class=" btn btn-outline-info float-right  btn-sm" to="/product"
+                             style="margin-bottom:
                   30px"> Add
-                </button>
+                </router-link>
               </h3>
 
             </div>
@@ -32,10 +32,12 @@
                 <td>{{ ++index }}</td>
                 <td>{{ product.title }}</td>
                 <td>{{ product.price }}</td>
-                <!--                  <td><img :src="'http://localhost:8000/public/' +product.description" alt=""></td>-->
+                <td><img width="50px" height="50px" :src="'http://localhost:8000/public/images/'+product.image" alt="">
+                </td>
                 <td>{{ product.description }}</td>
                 <td>
-                  <button type="button" class="btn btn-primary btn-sm "> Edit</button>
+                  <button type="button" class="btn btn-primary btn-sm" v-on:click="editProduct(product.id)"> Edit
+                  </button>
                   <button type="button" class="btn btn-danger btn-sm" style="margin-left: 3px"
                           v-on:click="deleteProduct(product.id)"> Delete
                   </button>
@@ -46,10 +48,63 @@
             </table>
           </div>
         </div>
+
+        <!-- edit product modal -->
+        <div v-if="myModel">
+          <transition name="model">
+            <div class="modal-mask">
+              <div class="modal-wrapper">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Product Edit</h4>
+                      <button type="button" class="close float-right" @click="myModel=false"><span aria-hidden="true">
+                        &times;</span>
+                      </button>
+
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>Title </label>
+                            <input type="text" v-model="title" class="form-control form-control-lg"/>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>Price</label>
+                            <input type="number" v-model="price" class="form-control form-control-lg"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" v-model="description" id="description" rows="3"></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="File">Image</label>
+                        <input type="file" class="form-control form-control-lg" id="file" ref="file">
+                      </div>
+                      <input type="hidden" v-model="id">
+                      <button type="button" v-on:click="productUpdate" class="btn btn-primary btn-lg btn-block">Submit
+                      </button>
+                      <br/>
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
+        <!-- edit product modal -->
       </div>
     </div>
 
   </div>
+
 </template>
 
 <script>
@@ -59,16 +114,50 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      products: []
+      products: [],
+      allData: '',
+      myModel: false,
+      title: '',
+      price: '',
+      id: '',
+      description: '',
+
+
     }
   },
   methods: {
+    editProduct(id) {
+      var application = this;
+      const token = localStorage.getItem('token');
+      // eslint-disable-next-line no-undef
+      Swal.fire({
+        title: 'Want to Edit this Product?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirm'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.get('http://localhost:8000/api/product-show/' + id,
+              {headers: {"Authorization": `Bearer ${token}`}}).then(function (response) {
+
+            application.id = response.data.data.id;
+            application.title = response.data.data.title;
+            application.price = response.data.data.price;
+            application.description = response.data.data.description;
+            application.myModel = true;
+          });
+        }
+      });
+
+
+    },
     deleteProduct(id) {
       const token = localStorage.getItem('token');
       // eslint-disable-next-line no-undef
       Swal.fire({
-        title: 'Are you sure?',
-        text: "Want to Delete this Product",
+        title: 'Want to Delete this Product?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -77,17 +166,69 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           axios.delete('http://localhost:8000/api/product-delete/' + id,
-              { headers: {"Authorization" : `Bearer ${token}`}})
+              {headers: {"Authorization": `Bearer ${token}`}})
               .then(response => {
                 // eslint-disable-next-line no-undef
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
-                location.reload();
+                Swal.fire({
+                  title: 'Product Successfully Deleted',
+                  icon: 'success',
+                  showCancelButton: false,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Ok'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                });
                 console.log(response);
               })
+              .catch(e => {
+                // eslint-disable-next-line no-undef
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Something went wrong!',
+                })
+                location.reload();
+                console.log(e);
+              })
+
+
+        }
+      })
+
+    },
+    productUpdate() {
+      let id = this.id;
+      let title = this.title;
+      let description = this.description;
+      let price = this.price;
+      const token = localStorage.getItem('token');
+      axios.put('http://localhost:8000/api/product-update/' + id, {
+        title,
+        price,
+        description
+      }, {headers: {"Authorization": `Bearer ${token}`}})
+          .then(response => {
+
+            console.log(response);
+            this.myModel = false;
+            // eslint-disable-next-line no-undef
+            Swal.fire({
+              title: 'Product Successfully Updated',
+              icon: 'success',
+              showCancelButton: false,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ok'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
+            });
+
+          })
           .catch(e => {
             // eslint-disable-next-line no-undef
             Swal.fire({
@@ -97,32 +238,40 @@ export default {
             })
             console.log(e);
           })
-
-
-        }
-      })
-
     },
-    createProduct() {
 
-    },
   },
 
   mounted() {
     const token = localStorage.getItem('token');
     axios.get('http://localhost:8000/api/product-list',
-        { headers: {"Authorization" : `Bearer ${token}`}}).then(response => {
-          // JSON responses are automatically parsed.
-          this.products = response.data.product
-          console.log(response);
-        })
-    // .catch(e => {
-    //   this.errors.push(e)
-    // })
+        {headers: {"Authorization": `Bearer ${token}`}}).then(response => {
+      // JSON responses are automatically parsed.
+      this.products = response.data.product
+      console.log(response);
+    })
   }
 }
 </script>
 <style scoped>
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
 * {
   box-sizing: border-box;
 }

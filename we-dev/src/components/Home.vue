@@ -2,6 +2,7 @@
     <div class="vue-tempalte">
 
     </div>
+
 </template>
 
 <script>

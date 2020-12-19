@@ -58,13 +58,18 @@ export default {
           .then(response => {
             // eslint-disable-next-line no-undef
             Swal.fire({
-
-              icon: 'success',
               title: 'Successfully Registered',
-              showConfirmButton: false,
-              timer: 2000
-            })
-            this.$router.push({name: 'login'})
+              icon: 'success',
+              showCancelButton: false,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ok'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.$router.push({name: 'login'})
+              }
+            });
+
             console.log(response);
           })
           .catch(e => {
