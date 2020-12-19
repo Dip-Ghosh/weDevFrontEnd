@@ -1,43 +1,84 @@
 <template>
-    <div class="vue-tempalte">
-      <div class="vertical-center">
-        <div class="inner-block">
-        <form>
-            <h3>Sign Up</h3>
+  <div class="vue-tempalte">
+    <div class="vertical-center">
+      <div class="inner-block">
 
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" class="form-control form-control-lg"/>
-            </div>
+        <h3>Registration</h3>
 
-            <div class="form-group">
-                <label>Email address</label>
-                <input type="email" class="form-control form-control-lg" />
-            </div>
-
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" class="form-control form-control-lg" />
-            </div>
-
-            <button type="submit" class="btn btn-dark btn-lg btn-block">Sign Up</button>
-
-            <p class="forgot-password text-right">
-                Already registered 
-                <router-link :to="{name: 'login'}">sign in?</router-link>
-            </p>
-        </form>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" v-model="user.name" class="form-control form-control-lg"/>
         </div>
+
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" v-model="user.email" class="form-control form-control-lg"/>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" v-model="user.password" class="form-control form-control-lg"/>
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" v-model="user.password_confirmation" class="form-control form-control-lg"/>
+        </div>
+
+        <button type="button" v-on:click="registration" class="btn btn-info btn-lg btn-block">Register</button>
+
+        <p class="forgot-password text-right">
+          Already registered
+          <router-link :to="{name: 'login'}">sign in?</router-link>
+        </p>
+
       </div>
     </div>
+  </div>
 </template>
 
 <script>
-    export default {
-        data() {
-            return {}
-        }
+// eslint-disable-next-line no-undef
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      user :{
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+      }
     }
+  },
+  methods: {
+    registration() {
+      axios.post('http://localhost:8000/api/register',this.user)
+          .then(response => {
+            // eslint-disable-next-line no-undef
+            Swal.fire({
+
+              icon: 'success',
+              title: 'Successfully Registered',
+              showConfirmButton: false,
+              timer: 2000
+            })
+            this.$router.push({name: 'login'})
+            console.log(response);
+          })
+          .catch(e => {
+            // eslint-disable-next-line no-undef
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            })
+            console.log(e);
+          })
+    }
+  }
+}
 </script>
 <style scoped>
 * {
@@ -75,10 +116,10 @@ html,
 .inner-block {
   width: 450px;
   margin: auto;
-  margin-top: 120px;
+  margin-top: 80px;
   background: #ffffff;
   box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
-  padding: 40px 55px 45px 55px;
+  padding: 15px 55px 15px 55px;
   border-radius: 15px;
   transition: all .3s;
 }
@@ -125,6 +166,7 @@ label {
   margin: 0;
   padding: 0;
 }
+
 .social-icons ul li {
   display: inline-block;
   zoom: 1;
@@ -144,6 +186,7 @@ label {
   margin: 0 5px;
   text-decoration: none;
 }
+
 .social-icons ul li a i {
   -webkit-transition: all 0.2s ease-in;
   -moz-transition: all 0.2s ease-in;

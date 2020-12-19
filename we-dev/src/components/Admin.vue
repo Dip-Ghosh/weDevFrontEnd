@@ -86,9 +86,15 @@ export default {
                 location.reload();
                 console.log(response);
               })
-          // .catch(e => {
-          //   this.errors.push(e)
-          // })
+          .catch(e => {
+            // eslint-disable-next-line no-undef
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            })
+            console.log(e);
+          })
 
 
         }

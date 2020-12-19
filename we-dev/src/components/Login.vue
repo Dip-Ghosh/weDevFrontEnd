@@ -3,8 +3,7 @@
       <div class="vertical-center">
         <div class="inner-block">
           <form>
-            <h3>Sign In</h3>
-
+            <h3>Login</h3>
             <div class="form-group">
                 <label>Email address</label>
                 <input type="email" class="form-control form-control-lg" />
