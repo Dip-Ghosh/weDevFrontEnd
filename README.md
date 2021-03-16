@@ -1,4 +1,4 @@
-# Netify URL :https://dreamy-edison-963ccc.netlify.app/signup
+# Netify URL :https://dreamy-edison-963ccc.netlify.app
 
 ## Project setup
 ```
